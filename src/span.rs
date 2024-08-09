@@ -213,7 +213,7 @@ impl Default for SpanContextStateBuilder {
 }
 
 /// Jaeger specific span context state.
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Eq, PartialEq)]
 pub struct SpanContextState {
     trace_id: TraceId,
     span_id: u64,
