@@ -1,4 +1,5 @@
 use cf_rustracing::sampler::{BoxSampler, Sampler};
+use cf_rustracing::span::SpanConsumer;
 use cf_rustracing::Tracer as InnerTracer;
 use std::borrow::Cow;
 use std::fmt;
@@ -11,13 +12,23 @@ pub struct Tracer {
     inner: InnerTracer<BoxSampler<SpanContextState>, SpanContextState>,
 }
 impl Tracer {
-    /// Makes a new `Tracer` instance.
+    /// Makes a new `Tracer` instance with an unbounded [`tokio::sync::mpsc`] channel.
     pub fn new<S>(sampler: S) -> (Self, SpanReceiver)
     where
         S: Sampler<SpanContextState> + Send + Sync + 'static,
     {
         let (inner, rx) = InnerTracer::new(sampler.boxed());
         (Tracer { inner }, rx)
+    }
+
+    /// Makes a new `Tracer` instance with a custom consumer implementation.
+    pub fn with_consumer<S, C>(sampler: S, consumer: C) -> Self
+    where
+        S: Sampler<SpanContextState> + Send + Sync + 'static,
+        C: SpanConsumer<SpanContextState> + 'static,
+    {
+        let inner = InnerTracer::with_consumer(sampler.boxed(), consumer);
+        Tracer { inner }
     }
 
     /// Clone with the given `sampler`.
