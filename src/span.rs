@@ -57,10 +57,13 @@ pub type SpanHandle = cf_rustracing::span::SpanHandle<SpanContextState>;
 /// Finished span.
 pub type FinishedSpan = cf_rustracing::span::FinishedSpan<SpanContextState>;
 
-/// Span receiver.
+/// Unbounded [`tokio::sync::mpsc`] span receiver.
 pub type SpanReceiver = cf_rustracing::span::SpanReceiver<SpanContextState>;
 
-/// Sender of finished spans to the destination channel.
+/// Deprecated: alias for default [`SpanConsumer`](cf_rustracing::span::SpanConsumer)
+/// implementation.
+#[deprecated = "SpanSender is an implementation detail of rustracing. It should not be public."]
+#[expect(deprecated, reason = "alias is deprecated itself")]
 pub type SpanSender = cf_rustracing::span::SpanSender<SpanContextState>;
 
 /// Options for starting a span.
